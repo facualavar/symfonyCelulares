@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
 class ProductoController extends AbstractController
@@ -23,14 +24,32 @@ class ProductoController extends AbstractController
     * @Route("/producto", name="producto_ver")
     */
 
-    public function ver()
+    public function index()
     {            
         $prodManager = $this->getDoctrine()->getManager();
         $productos = $prodManager->getRepository(Producto::class)->findAll();
 
         $response = new Response();
         $encoders = array(new JsonEncoder());
-        $normalizers = array(new ObjectNormalizer());
+        
+        //Serialize Manejo de Referencias Circulares
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getNombre();
+            },
+        ];
+        $normalizers = array((new ObjectNormalizer(null, null, null, null, null, null, $defaultContext))->setIgnoredAttributes(
+            [
+                "__initializer__", 
+                "__cloner__",
+                "__isInitialized__",
+                "productos",
+                "subCategorias",
+                "subSubCategorias"
+            ]
+        ));
+        //
+
         $serializer = new Serializer($normalizers, $encoders);
 
         $response->setContent(json_encode(array(
@@ -42,10 +61,10 @@ class ProductoController extends AbstractController
 
 
     /**
-    * @Route("/producto/buscar/{id}", name="producto_buscar")
+    * @Route("/producto/get/{id}", name="producto_buscar")
     */
 
-    public function buscar($id)
+    public function producto($id)
     {
         $prodManager = $this->getDoctrine()->getManager();
         $producto = $prodManager->getRepository(Producto::class)->find($id);
@@ -55,7 +74,25 @@ class ProductoController extends AbstractController
         
         $response = new Response();
         $encoders = array(new JsonEncoder());
-        $normalizers = array(new ObjectNormalizer());
+        
+        //Serialize Manejo de Referencias Circulares
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object, $format, $context) {
+                return $object->getNombre();
+            },
+        ];
+        $normalizers = array((new ObjectNormalizer(null, null, null, null, null, null, $defaultContext))->setIgnoredAttributes(
+            [
+                "__initializer__", 
+                "__cloner__",
+                "__isInitialized__",
+                "productos",
+                "subCategorias",
+                "subSubCategorias"
+            ]
+        ));
+        //
+        
         $serializer = new Serializer($normalizers, $encoders);
 
         $response->setContent(json_encode(array(
@@ -70,7 +107,7 @@ class ProductoController extends AbstractController
     * @Route("/producto/new", name="producto_nuevo")
     */
 
-    public function nuevo(Request $producto){
+    public function new(Request $producto){
 
         //tranformamos el archivo Json
         $data = json_decode($producto->getContent(), true);
@@ -101,10 +138,10 @@ class ProductoController extends AbstractController
 
 
     /**
-    * @Route("/producto/{id}/edit", name="producto_edit")
+    * @Route("/producto/edit/{id}", name="producto_edit")
     */
 
-    public function editar($id, Request $producto){
+    public function update($id, Request $producto){
 
         //tranformamos el archivo Json
         $data = json_decode($producto->getContent(), true);
@@ -137,9 +174,8 @@ class ProductoController extends AbstractController
 
     
      /**
-     * @Route("/producto/{id}", name="producto_delete")
+     * @Route("/producto/delete/{id}", name="producto_delete")
      */
-
     public function borrar($id)
     {
         $prodManager = $this->getDoctrine()->getManager();

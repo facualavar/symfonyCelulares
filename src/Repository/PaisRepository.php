@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Producto;
+use App\Entity\Pais;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
- * @method Producto|null find($id, $lockMode = null, $lockVersion = null)
- * @method Producto|null findOneBy(array $criteria, array $orderBy = null)
- * @method Producto[]    findAll()
- * @method Producto[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Pais|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Pais|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Pais[]    findAll()
+ * @method Pais[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProductoRepository extends ServiceEntityRepository
+class PaisRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Producto::class);
+        parent::__construct($registry, Pais::class);
     }
 
     // /**
-    //  * @return Producto[] Returns an array of Producto objects
+    //  * @return Pais[] Returns an array of Pais objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class ProductoRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Producto
+    public function findOneBySomeField($value): ?Pais
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.exampleField = :val')

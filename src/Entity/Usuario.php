@@ -42,7 +42,7 @@ class Usuario
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Perfil", inversedBy="usuarios")
      */
     private $perfil;
 
@@ -111,12 +111,12 @@ class Usuario
         return $this;
     }
 
-    public function getPerfil(): ?string
+    public function getPerfil(): ?Perfil
     {
         return $this->perfil;
     }
 
-    public function setPerfil(string $perfil): self
+    public function setPerfil(?Perfil $perfil): self
     {
         $this->perfil = $perfil;
 
